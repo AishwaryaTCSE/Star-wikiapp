@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rick & Morty Wiki - Characters</title>
+  <style>
+    /* Layout & Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-theme {
+      background: #121212;
+      color: #eee;
+    }
+
+    /* Header */
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .dark-theme header {
+      background: #1f7a1f;
+    }
+    header h1 {
+      font-size: 1.5rem;
+    }
+    header .controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    header button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: white;
+      color: #4CAF50;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    header button:hover {
+      background: #e8e8e8;
+    }
+    .dark-theme header button {
+      background: #333;
+      color: #eee;
+    }
+    .dark-theme header button:hover {
+      background: #444;
+    }
+
+    /* Main Gallery */
+    main {
+      flex-grow: 1;
+      padding: 1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background: #fafafa;
+      text-align: center;
+      transition: box-shadow 0.3s ease, background 0.3s, color 0.3s;
+    }
+    .card:hover {
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .dark-theme .card {
+      background: #222;
+      border-color: #444;
+      color: #eee;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 6px;
+    }
+    .card h3 {
+      margin: 0.5rem 0 0.25rem 0;
+      font-size: 1.1rem;
+    }
+    .card p {
+      margin: 0.25rem 0;
+      font-size: 0.9rem;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #4CAF50;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .card a:hover {
+      text-decoration: underline;
+    }
+    .dark-theme .card a {
+      color: #8fc48f;
+    }
+
+    /* Pagination */
+    .pagination {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+    }
+    .pagination button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pagination button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+    .pagination button:hover:not(:disabled) {
+      background: #45a049;
+    }
+    .pagination span {
+      font-size: 1rem;
+    }
+
+    /* Footer Clock */
+    footer {
+      background: #ddd;
+      padding: 0.5rem;
+      text-align: center;
+      font-family: monospace;
+      font-weight: bold;
+      color: #333;
+    }
+    .dark-theme footer {
+      background: #333;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rick & Morty Characters</h1>
+    <div class="controls">
+      <button id="logoutBtn">Logout</button>
+      <button id="themeToggleBtn">Toggle Dark/Light</button>
+      <button id="randomBtn">Random Character</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="gallery" class="grid"></div>
+    <div class="pagination">
+      <button id="prevBtn">Previous</button>
+      <span id="pageNum">Page 1</span>
+      <button id="nextBtn">Next</button>
+    </div>
+  </main>
+
+  <footer>
+    <div id="footerClock"></div>
+  </footer>
+
+  <script type="module">
+    import { onAuthChange, logout } from './auth.js';
+
+    // Only users with these roles can view
+    const allowedRoles = ['user', 'admin'];
+
+    const gallery = document.getElementById('gallery');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageNum = document.getElementById('pageNum');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const footerClock = document.getElementById('footerClock');
+
+    let currentPage = 1;
+    let totalPages = 1;
+
+    onAuthChange(user => {
+      if (!user || !allowedRoles.includes(user.role)) {
+        alert('Access denied. Please login.');
+        logout().then(() => window.location.href = 'login.html');
+      } else {
+        initApp();
+      }
+    });
+
+    logoutBtn.onclick = async () => {
+      await logout();
+      window.location.href = 'login.html';
+    };
+
+    themeToggleBtn.onclick = () => {
+      const isDark = document.body.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme);
+      localStorage.setItem('theme', newTheme);
+    };
+
+    randomBtn.onclick = () => {
+      const randomId = Math.floor(Math.random() * 826) + 1; // API has 826 characters
+      window.open(`details.html?id=${randomId}`, '_blank');
+    };
+
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        fetchCharacters(currentPage - 1);
+      }
+    };
+
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        fetchCharacters(currentPage + 1);
+      }
+    };
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    }
+
+    async function fetchCharacters(page) {
+      try {
+        const res = await fetch(`https://rickandmortyapi.com/api/character?page=${page}`);
+        const data = await res.json();
+        totalPages = data.info.pages;
+        currentPage = page;
+        pageNum.textContent = `Page ${currentPage}`;
+        renderCharacters(data.results);
+      } catch (err) {
+        gallery.innerHTML = `<p>Error loading characters: ${err.message}</p>`;
+      }
+    }
+
+    function renderCharacters(chars) {
+      gallery.innerHTML = '';
+      chars.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${c.image}" alt="${c.name}" />
+          <h3>${c.name}</h3>
+          <p>Species: ${c.species}</p>
+          <p>Status: ${c.status}</p>
+          <a href="details.html?id=${c.id}" target="_blank">View Details</a>
+        `;
+        gallery.appendChild(card);
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour12: false });
+      const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+      const date = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      footerClock.textContent = `${day}, ${date} — ${time}`;
+    }
+
+    function initApp() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      applyTheme(savedTheme);
+
+      fetchCharacters(currentPage);
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+  </script>
+</body>
+</html>

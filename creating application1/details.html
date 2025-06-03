@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Character Details - Rick & Morty Wiki</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-theme {
+      background: #121212;
+      color: #eee;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .dark-theme header {
+      background: #1f7a1f;
+    }
+    header h1 {
+      font-size: 1.5rem;
+    }
+    header .controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    header button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: white;
+      color: #4CAF50;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    header button:hover {
+      background: #e8e8e8;
+    }
+    .dark-theme header button {
+      background: #333;
+      color: #eee;
+    }
+    .dark-theme header button:hover {
+      background: #444;
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      margin-bottom: 0.5rem;
+    }
+    p {
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      background: #ddd;
+      padding: 0.5rem;
+      text-align: center;
+      font-family: monospace;
+      font-weight: bold;
+      color: #333;
+    }
+    .dark-theme footer {
+      background: #333;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Character Details</h1>
+    <div class="controls">
+      <button id="backBtn">Back to Gallery</button>
+      <button id="logoutBtn">Logout</button>
+      <button id="themeToggleBtn">Toggle Dark/Light</button>
+    </div>
+  </header>
+
+  <main id="detailsMain">
+    <p>Loading...</p>
+  </main>
+
+  <footer>
+    <div id="footerClock"></div>
+  </footer>
+
+  <script type="module">
+    import { onAuthChange, logout } from './auth.js';
+
+    const allowedRoles = ['user', 'admin'];
+    const detailsMain = document.getElementById('detailsMain');
+    const backBtn = document.getElementById('backBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const footerClock = document.getElementById('footerClock');
+
+    onAuthChange(user => {
+      if (!user || !allowedRoles.includes(user.role)) {
+        alert('Access denied. Please login.');
+        logout().then(() => window.location.href = 'login.html');
+      } else {
+        loadCharacter();
+        initClock();
+        applySavedTheme();
+      }
+    });
+
+    backBtn.onclick = () => {
+      window.location.href = 'index.html';
+    };
+
+    logoutBtn.onclick = async () => {
+      await logout();
+      window.location.href = 'login.html';
+    };
+
+    themeToggleBtn.onclick = () => {
+      const isDark = document.body.classList.contains('dark-theme');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme);
+      localStorage.setItem('theme', newTheme);
+    };
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    }
+
+    function applySavedTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      applyTheme(savedTheme);
+    }
+
+    function initClock() {
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour12: false });
+      const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+      const date = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      footerClock.textContent = `${day}, ${date} — ${time}`;
+    }
+
+    async function loadCharacter() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) {
+        detailsMain.innerHTML = '<p>No character ID provided.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
+        if (!res.ok) throw new Error('Character not found');
+        const c = await res.json();
+
+        detailsMain.innerHTML = `
+          <img src="${c.image}" alt="${c.name}" />
+          <h2>${c.name}</h2>
+          <p><strong>Status:</strong> ${c.status}</p>
+          <p><strong>Species:</strong> ${c.species}</p>
+          <p><strong>Type:</strong> ${c.type || 'N/A'}</p>
+          <p><strong>Gender:</strong> ${c.gender}</p>
+          <p><strong>Origin:</strong> ${c.origin.name}</p>
+          <p><strong>Location:</strong> ${c.location.name}</p>
+          <p><strong>Number of Episodes:</strong> ${c.episode.length}</p>
+        `;
+      } catch (err) {
+        detailsMain.innerHTML = `<p>Error loading character: ${err.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>

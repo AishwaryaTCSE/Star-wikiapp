@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Star Wars Wiki</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <h1>Star Wars Wiki</h1>
+  <button id="logout-btn">Logout</button>
+  <div id="character-container" class="grid-container"></div>
+  <div class="pagination">
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+  </div>
+  <footer id="footer-clock"></footer>
+
+  <!-- Firebase CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <!-- Your Firebase config -->
+  <script src="js/firebase-config.js"></script>
+
+  <!-- Auth + App Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

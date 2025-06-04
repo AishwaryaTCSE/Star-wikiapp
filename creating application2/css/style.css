@@ -1,0 +1,207 @@
+/* Global Reset & Font */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #2c2c2c;
+}
+
+/* Background */
+body {
+  min-height: 100vh;
+  background: linear-gradient(to right, #be95be 0%, #faff82 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Grid Layout */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 960px;
+  margin: 30px 0;
+}
+
+/* Card with Glassmorphism */
+.card {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  color: #111;
+  font-weight: 600;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+button {
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.6);
+  color: #000;
+}
+
+button:disabled {
+  background: rgba(200, 200, 200, 0.4);
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* Footer */
+footer#footer-clock {
+  margin-top: auto;
+  padding: 12px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+/* Character Detail */
+#character-detail {
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin-bottom: 30px;
+}
+
+#character-detail img {
+  max-width: 280px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+#character-detail p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* ========== AUTH FORMS ========== */
+form {
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 30px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Labels */
+form label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Inputs */
+input[type="email"],
+input[type="password"] {
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  color: #000;
+}
+
+input::placeholder {
+  color: #666;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  font-size: 1.1rem;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  color: #000;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Paragraph & Links */
+p {
+  margin-top: 15px;
+  text-align: center;
+  color: #333;
+}
+
+a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Logout Button */
+#logout-btn {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #000;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+#logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #222;
+}

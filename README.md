@@ -68,13 +68,3 @@
    - **Challenge:** Ensuring Firebase Authentication and Firestore work properly when deployed (CORS, login errors).
    - **Solution:** Configured Firebase project properly, ensured rules were correct, and deployed using Netlify/GitHub Pages after testing on localhost.
   
-
-## Screenshots
- - Sign-up(Signup.png)
- -After Signup form the pop-up message signup successful!(After-Signup.png)
- - Login- Form (Login.png)
- - Dashboard-View(Dashboard.png)
- - Pagination! (Paignation.png)
- - When we click any of the card it show the deatils of character View deatils (Character-Details.png)
- - we can change Theme Colour ie white or dark mode!(Theme-Toggle.png)
- -Logout-Form!(Logout.png)
